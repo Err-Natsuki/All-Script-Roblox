@@ -1,5 +1,3 @@
--- Re Mod by Zoi
-
 local Kavo = {}
 
 local tween = game:GetService("TweenService")
@@ -18,7 +16,7 @@ function Kavo:DraggingEnabled(frame, parent)
     local dragInput, mousePos, framePos
 
     frame.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = true
             mousePos = input.Position
             framePos = parent.Position
@@ -32,7 +30,7 @@ function Kavo:DraggingEnabled(frame, parent)
     end)
 
     frame.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement then
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
             dragInput = input
         end
     end)
@@ -74,20 +72,6 @@ local themeStyles = {
     },
     BloodTheme = {
         SchemeColor = Color3.fromRGB(227, 27, 27),
-        Background = Color3.fromRGB(10, 10, 10),
-        Header = Color3.fromRGB(5, 5, 5),
-        TextColor = Color3.fromRGB(255,255,255),
-        ElementColor = Color3.fromRGB(20, 20, 20)
-    },
-    OrangeTheme = {
-        SchemeColor = Color3.fromRGB(255,145,0),
-        Background = Color3.fromRGB(10, 10, 10),
-        Header = Color3.fromRGB(5, 5, 5),
-        TextColor = Color3.fromRGB(255,255,255),
-        ElementColor = Color3.fromRGB(20, 20, 20)
-    },
-    CyanTheme = {
-        SchemeColor = Color3.fromRGB(0,255,230),
         Background = Color3.fromRGB(10, 10, 10),
         Header = Color3.fromRGB(5, 5, 5),
         TextColor = Color3.fromRGB(255,255,255),
@@ -136,11 +120,11 @@ local themeStyles = {
         ElementColor = Color3.fromRGB(22, 29, 31)
     },
     Mods = {
-        SchemeColor = Color3.fromRGB(255, 0, 0),
-        Background = Color3.fromRGB(255, 255, 0),
-        Header = Color3.fromRGB(102, 0, 255),
-        TextColor = Color3.fromRGB(159, 102, 245),
-        ElementColor = Color3.fromRGB(255, 0, 75)
+        SchemeColor = Color3.fromRGB(255, 10, 195),
+        Background = Color3.fromRGB(31, 41, 43),
+        Header = Color3.fromRGB(255, 0, 0),
+        TextColor = Color3.fromRGB(255, 255, 255),
+        ElementColor = Color3.fromRGB(22, 29, 31)
     }
 }
 local oldTheme = ""
@@ -150,7 +134,9 @@ local SettingsT = {
 }
 
 local Name = "KavoConfig.JSON"
-
+if not isfile("KavoConfig.JSON") then
+   writefile(Name) 
+end
 pcall(function()
 
 if not pcall(function() readfile(Name) end) then
@@ -180,10 +166,6 @@ function Kavo.CreateLib(kavName, themeList)
         themeList = themeStyles.LightTheme
     elseif themeList == "BloodTheme" then
         themeList = themeStyles.BloodTheme
-    elseif themeList == "OrangeTheme" then
-        themeList = themeStyles.OrangeTheme
-    elseif themeList == "CyanTheme" then
-        themeList = themeStyles.CyanTheme
     elseif themeList == "GrapeTheme" then
         themeList = themeStyles.GrapeTheme
     elseif themeList == "Ocean" then
@@ -257,6 +239,7 @@ function Kavo.CreateLib(kavName, themeList)
     ScreenGui.ResetOnSpawn = false
 
     Main.Name = "Main"
+    Main.Active = true
     Main.Parent = ScreenGui
     Main.BackgroundColor3 = themeList.Background
     Main.ClipsDescendants = true
@@ -308,12 +291,15 @@ function Kavo.CreateLib(kavName, themeList)
     close.ImageRectOffset = Vector2.new(284, 4)
     close.ImageRectSize = Vector2.new(24, 24)
     close.MouseButton1Click:Connect(function()
-        Main:TweenSize(UDim2.new(100,0,100,0), "Out", "Quad", 0.5, true)
+        game.TweenService:Create(close, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {
+            ImageTransparency = 1
+        }):Play()
+        wait()
+        game.TweenService:Create(Main, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+			Size = UDim2.new(0,0,0,0),
+			Position = UDim2.new(0, Main.AbsolutePosition.X + (Main.AbsoluteSize.X / 2), 0, Main.AbsolutePosition.Y + (Main.AbsoluteSize.Y / 2))
+		}):Play()
         wait(1)
-        Main:TweenSize(UDim2.new(10,0,10,0), "Out", "Quad", 0.5, true)
-        wait(1)
-        Main:TweenSize(UDim2.new(0,0,0,0), "Out", "Quad", 0.5, true)
-        wait(0.5)
         ScreenGui:Destroy()
     end)
 
@@ -366,6 +352,7 @@ function Kavo.CreateLib(kavName, themeList)
     infoContainer.ClipsDescendants = true
     infoContainer.Position = UDim2.new(0.299047619, 0, 0.874213815, 0)
     infoContainer.Size = UDim2.new(0, 368, 0, 33)
+
     
     coroutine.wrap(function()
         while wait() do
@@ -376,7 +363,7 @@ function Kavo.CreateLib(kavName, themeList)
             coverup.BackgroundColor3 = themeList.Header
         end
     end)()
-    
+
     function Kavo:ChangeColor(prope,color)
         if prope == "Background" then
             themeList.Background = color
@@ -391,9 +378,9 @@ function Kavo.CreateLib(kavName, themeList)
         end
     end
     local Tabs = {}
-    
+
     local first = true
-    
+
     function Tabs:NewTab(tabName)
         tabName = tabName or "Tab"
         local tabButton = Instance.new("TextButton")
