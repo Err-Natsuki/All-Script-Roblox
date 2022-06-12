@@ -136,11 +136,11 @@ local themeStyles = {
         ElementColor = Color3.fromRGB(22, 29, 31)
     },
     Mods = {
-        SchemeColor = Color3.fromRGB(102, 102, 255),
-        Background = Color3.fromRGB(153, 255, 204),
-        Header = Color3.fromRGB(0, 153, 0),
-        TextColor = Color3.fromRGB(96, 96, 96),
-        ElementColor = Color3.fromRGB(153, 153, 255)
+        SchemeColor = Color3.fromRGB(255, 0, 0),
+        Background = Color3.fromRGB(255, 255, 0),
+        Header = Color3.fromRGB(102, 0, 255),
+        TextColor = Color3.fromRGB(159, 102, 245),
+        ElementColor = Color3.fromRGB(255, 0, 75)
     }
 }
 local oldTheme = ""
