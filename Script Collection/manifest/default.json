@@ -19,9 +19,10 @@
     ]
   },
   "package": {
+    "library": "ModdedKavoUI",
     "title": "Script Collection",
     "version": "0.0.1",
-    "theme": "Serpent",
+    "theme": "Mods",
     "discord": "https://discord.gg/jzWhuW8x",
     "dev": "one voice#8752"
   }
