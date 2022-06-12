@@ -1,4 +1,11 @@
 {
+  "scriptData": {
+    "title": "Script Collection",
+    "version": "0.0.1",
+    "theme": "Serpent",
+    "discord": "https://discord.gg/jzWhuW8x",
+    "dev": "one voice#8752"
+  },
   "script": {
     "directory": "source",
     "data": [
@@ -17,12 +24,5 @@
     "data": [
       "Zoi"
     ]
-  },
-  "scriptData": {
-    "title": "Script Collection",
-    "version": "0.0.1",
-    "theme": "Serpent",
-    "discord": "https://discord.gg/jzWhuW8x",
-    "dev": "one voice#8752"
   }
 }
