@@ -1,0 +1,18 @@
+local Plugin = {
+    ["PluginName"] = "ImageDownloader",
+    ["PluginDescription"] = "Downloads a Image. (Empire#4946)",
+    ["Commands"] = {
+        ["imagedownload"] = {
+            ["ListName"] = "imagedownload [link] [name]",
+            ["Description"] = "Downloads a image",
+            ["Aliases"] = {"imagedownload","imd","imdownload"},
+            ["Function"] = function(args,speaker)
+              makefolder("SavedImages")
+              local file = game:HttpGet(""..args[1].."")
+              writefile("SavedImages\\"..args[2]..".png", file)
+            end
+        }
+     }
+}
+
+return Plugin
