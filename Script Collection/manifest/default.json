@@ -1,0 +1,40 @@
+{
+  "scriptData": {
+    "title": "Script Collection",
+    "version": "0.0.1",
+    "theme": "Ocean",
+    "discord": "https://discord.io/yfhCjvobs",
+    "dev": "one voice#8752"
+  },
+  "script": {
+    "directory": "source",
+    "data": [
+      "Auto Toxic Tool",
+      "WASD Keyboard",
+      "Infinite Yield",
+      "Backdoor Server Side",
+      "Death Note",
+      "FreeHoverBoards",
+      "MM2 Admin Panel",
+      "Prison Life Admin (Septex)"
+    ]
+  },
+  "profile": {
+    "directory": "dev",
+    "data": [
+      "Zoi"
+    ]
+  },
+  "plugin": {
+    "directory": "plugin",
+    "data": [
+      "emotes",
+      "FreeFall",
+      "GotoFolder",
+      "imagedownloader",
+      "InternalFPSBoost",
+      "settingscount",
+      "WriteFileIY"
+    ]
+  }
+}
