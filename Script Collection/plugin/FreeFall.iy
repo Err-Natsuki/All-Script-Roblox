@@ -1,0 +1,25 @@
+local Plugin = {
+    ["PluginName"] = "FreeFall",
+    ["PluginDescription"] = "Scripted by NoobSploit#0001",
+    ["Commands"] = {
+        ["freefall"] = {
+            ["ListName"] = "fogend [Height]",
+            ["Description"] = "FreeFalled",
+            ["Aliases"] = {""},
+            ["Function"] = function(args,speaker)
+            Height = getstring(1)
+	        game:GetService('Players').LocalPlayer.Character:FindFirstChildOfClass('Humanoid').RootPart.CFrame *= CFrame.new(0,Height,0)
+            end
+        },
+        ["bounce"] = {
+            ["ListName"] = "bounce [Height]",
+            ["Description"] = "bounced",
+            ["Aliases"] = {""},
+            ["Function"] = function(args,speaker)
+            Height = getstring(1)
+	        game:GetService('Players').LocalPlayer.Character:FindFirstChildOfClass('Humanoid').RootPart.Velocity = Vector3.new(0,Height,0)
+            end
+        },
+    }
+}
+return Plugin
