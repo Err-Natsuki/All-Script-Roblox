@@ -25,8 +25,8 @@
       "Zoi"
     ]
   },
-  "plugin": {
-    "directory": "plugin",
+  "pluginInfinite": {
+    "directory": "plugin/infinite yield",
     "data": [
       "emotes",
       "FreeFall",
