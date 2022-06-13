@@ -28,7 +28,8 @@
   "plugin": {
     "directory": "plugin",
     "data": [
-      "settingscount (Infinite Yield)"
+      "settingscount",
+      "FreeFall"
     ]
   }
 }
