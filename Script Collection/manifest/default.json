@@ -8,54 +8,16 @@
   },
   "script": {
     "directory": "source",
-    "allFolder": [
-      "All Games",
-      "Backdoor SS",
-      "FE Script",
-      "Pet Simulator X",
-      "Murder Mystery 2",
-      "Prison Life"
-    ],
-    "data": {
-      "unknownfolder1": {
-        "folder": "folder1",
-        "data": [
-          "Auto Toxic Tool",
-          "WASD Keyboard",
-          "Infinite Yield"
-        ]
-      },
-      "unknownfolder2": {
-        "folder": "folder2",
-        "data": [
-          "Backdoor Server Side"
-        ]
-      },
-      "unknownfolder3": {
-        "folder": "folder2",
-        "data": [
-          "Death Note"
-        ]
-      },
-      "unknownfolder4": {
-        "folder": "folder4",
-        "data": [
-          "FreeHoverBoards"
-        ]
-      },
-      "unknownfolder5": {
-        "folder": "folder5",
-        "data": [
-          "MM2 Admin Panel"
-        ]
-      },
-      "unknownfolder6": {
-        "folder": "folder6",
-        "data": [
-          "Prison Life Admin (Septex)"
-        ]
-      }
-    }
+    "data": [
+      "Auto Toxic Tool",
+      "WASD Keyboard",
+      "Infinite Yield",
+      "Backdoor Server Side",
+      "Death Note",
+      "FreeHoverBoards",
+      "MM2 Admin Panel",
+      "Prison Life Admin (Septex)"
+    ]
   },
   "profile": {
     "directory": "dev",
@@ -65,16 +27,8 @@
   },
   "plugin": {
     "directory": "plugin",
-    "allFolder": [
-      "Infinite Yield"
-    ],
-    "data": {
-      "unknownfolder1": {
-        "folder": "folder1",
-        "data": [
-          "settingscount"
-        ]
-      }
-    }
+    "data": [
+      "settingscount (Infinite Yield)"
+    ]
   }
 }
