@@ -6,7 +6,7 @@ local base = {
     ["discord"] = "https://discord.io/yfhCjvobs"
   },
   ["script"] = {
-    ["data"] = "scripts/data"
+    ["data"] = "scripts/data.iy"
   }
 }
 
