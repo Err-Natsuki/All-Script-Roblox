@@ -1,0 +1,13 @@
+local base = {
+  ["main"] = {
+    ["title"] = "Glass Hubs",
+    ["v"] = 1,
+    ["theme"] = "Ocean",
+    ["discord"] = "https://discord.io/yfhCjvobs"
+  },
+  ["script"] = {
+    ["data"] = "scripts/data"
+  }
+}
+
+return base
