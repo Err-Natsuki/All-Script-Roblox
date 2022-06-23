@@ -7,7 +7,7 @@
     "owner": "one voice#8752"
   },
   "script": {
-    "directory": "source",
+    "directory": "scripts",
     "endsWith": ".txt",
     "data": [
       "[FlowerLily] Murder Mystery 2 GUI",
