@@ -1,0 +1,687 @@
+if not game.PlaceId == 142823291 then return end if not writefile or not readfile or not isfile or not isfolder then game.Players.LocalPlayer:Kick("Your executor does not support ItsJiDy.") return end
+
+if not getgenv().SymphonyHubLoader then return end
+
+if getgenv().SymphonyHubLoaded then
+    game.Players.LocalPlayer:kick("You need to rejoin and re-execute or else it make alot of lag. Understand")
+    return
+end
+
+getgenv().SymphonyHubLoaded = true
+
+function notify(title, text)
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = title,
+        Text = text,
+        Duration = 3,
+        Icon = "rbxthumb://type=Asset&id=5107182114&w=150&h=150"
+    })
+end
+
+notify("Wait!", "Setting Library..")
+wait(1.5)
+
+local Library = loadstring(game:HttpGet("https://pastebin.com/raw/gxrQ0YYN"))()
+local LibrarySetting = "Symphony Hub.json"
+
+Library:HideUI()
+
+-- Tabs
+
+notify("Wait!", "Loading UI!")
+wait(1.5)
+
+local PlayerUI = Library:CreateWindow("Player")
+local VisualsUI = Library:CreateWindow("Visuals")
+local TeleportUI = Library:CreateWindow("Teleport & Misc")
+local ModsUI = Library:CreateWindow("Game Mods")
+
+-- Variable
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local KeyBind = "M"
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LP = Players.LocalPlayer
+local workspace = game:GetService("Workspace")
+local HttpService = game:GetService("HttpService")
+local roles
+local Noclipping
+local CoreGui = game:GetService("CoreGui")
+local OBJECT = {
+    Walkspeed = 16,
+    Jumppower = 50,
+    AllCham = false,
+    ChamGunDrop = false,
+    AllESP = false,
+    ESPGunDrop = false,
+    AutoGrabGun = false,
+    InfiniteJump = false,
+    Noclip = false
+}
+
+-- Function
+
+if not pcall(function() readfile(LibrarySetting) end) then
+    writefile(LibrarySetting, "{\"Features\":{},\"CurrentKeyBind\":\"M\"}")
+end
+
+pcall(function()
+    ELib = HttpService:JSONDecode(readfile(LibrarySetting))
+    KeyBind = ELib.CurrentKeybind or "M"
+    ELib.CurrentKeybind = KeyBind
+    writefile(LibrarySetting, HttpService:JSONEncode(ELib))
+end)
+
+function isNumber(str)
+	if tonumber(str) ~= nil or str == 'inf' then
+		return true
+	end
+end:
+
+function UpCreateTextBox(name, repval, callback, fromA)
+    name = name or "Gotchu!!"
+    callback = callback or function() end
+    pcall(function()
+        if isNumber(ELib.Features[name]) then
+            ELib.Features[name] = tonumber(ELib.Features[name])
+        end
+        if isNumber(repval) then
+            repval = tonumber(repval)
+        end
+        ELib = HttpService:JSONDecode(readfile(LibrarySetting))
+        fromA:CreateTextBox(name, ELib.Features[name] or repval, function(value, focuslost)
+            if focuslost then
+                if isNumber(value) then
+                    value = tonumber(value)
+                end
+                callback(value)
+                ELib.Features[name] = value
+                writefile(LibrarySetting, HttpService:JSONEncode(ELib))
+            end
+        end)
+        if name == "WalkSpeed" or name == "JumpPower" then
+            callback(ELib.Features[name] or repval)
+        end
+            ELib.Features[name] = ELib.Features[name] or repval
+        writefile(LibrarySetting, HttpService:JSONEncode(ELib))
+    end)
+end
+
+function UpCreateToggle(name, callback, fromA)
+    name = name or "Gotchu!!"
+    callback = callback or function() end
+    pcall(function()
+        ELib = HttpService:JSONDecode(readfile(LibrarySetting))
+        fromA:CreateToggle(name, ELib.Features[name] or false, function(boolean)
+            callback(boolean)
+            ELib.Features[name] = boolean
+            writefile(LibrarySetting, HttpService:JSONEncode(ELib))
+        end)
+        ELib.Features[name] = ELib.Features[name] or false
+        writefile(LibrarySetting, HttpService:JSONEncode(ELib))
+    end)
+end
+
+local function GetRoles(Player)
+    local roles = ReplicatedStorage:FindFirstChild("GetPlayerData", true):InvokeServer()
+    local Role = roles[Player.Name]["Role"]
+    return Role
+end
+
+local function GetMurderer()
+    for _, Player in pairs(Players:GetPlayers()) do
+        role = GetRoles(Player)
+        if role == "Murderer" then
+            return Player
+        end
+    end
+end
+
+local function GetSheriff()
+    for _, Player in pairs(Players:GetPlayers()) do
+        role = GetRoles(Player)
+        if role == "Sheriff" then
+            return Player
+        end
+    end
+end
+
+local function GetHero()
+    for _, Player in pairs(Players:GetPlayers()) do
+        role = GetRoles(Player)
+        if role == "Hero" then
+            return Player
+        end
+    end
+end
+
+local function IsAlive(Player)
+	for i, v in pairs(roles) do
+		if Player.Name == i then
+			if not v.Killed and not v.Dead then
+				return true
+			else
+				return false
+			end
+		end
+	end
+end
+
+local function IsAliveV2(Player)
+    local role = ReplicatedStorage:FindFirstChild("GetPlayerData", true):InvokeServer()
+    local Dies = role[Player.Name]
+    if not Dies.Killed and not Dies.Dead then
+        return true
+    else
+        return false
+    end
+end
+
+local function GetPlayers(String)
+    if not String then return end
+    local Yes = {}
+    for _, Player in pairs(Players:GetPlayers()) do
+        if string.lower(Player.Name):match(string.lower(String)) or string.lower(Player.DisplayName):match(string.lower(String)) then
+            table.insert(Yes, Player)
+        end
+    end
+    if #Yes > 0 then
+        return Yes[1]
+    elseif #Yes < 1 then
+        return nil
+    end
+end
+
+function XrayOn(obj)
+    for _,v in pairs(obj:GetChildren()) do
+        if (v:IsA("BasePart")) and not v.Parent:FindFirstChild("Humanoid") then
+            v.LocalTransparencyModifier = 0.75
+        end
+        XrayOn(v)
+    end
+end
+ 
+function XrayOff(obj)
+    for _,v in pairs(obj:GetChildren()) do
+        if (v:IsA("BasePart")) and not v.Parent:FindFirstChild("Humanoid") then
+            v.LocalTransparencyModifier = 0
+        end
+        XrayOff(v)
+    end
+end
+
+function Chat(Message)
+    game:GetService("ReplicatedStorage").DefaultChatSystemChatEvents.SayMessageRequest:FireServer(Message, "normalchat")
+end
+
+function CreateCham()
+	for _, Player in pairs(Players:GetChildren()) do
+		if Player ~= LP and Player.Character and not Player.Character:FindFirstChild("Highlight") then
+			Instance.new("Highlight", Player.Character)           
+		end
+	end
+end
+
+function UpdateCham()
+	for _, Player in pairs(Players:GetChildren()) do
+		if Player ~= LP and Player.Character and Player.Character:FindFirstChild("Highlight") then
+			Highlight = Player.Character:FindFirstChild("Highlight")
+			if Player.Name == Sheriff and IsAlive(Player) then
+				Highlight.FillColor = Color3.fromRGB(0, 0, 255)
+			elseif Player.Name == Murderer and IsAlive(Player) then
+				Highlight.FillColor = Color3.fromRGB(255, 0, 0)
+			elseif Player.Name == Hero and IsAlive(Player) and not IsAlive(Players[Sheriff]) then
+				Highlight.FillColor = Color3.fromRGB(0, 250, 0)
+			else
+				Highlight.FillColor = Color3.fromRGB(0, 225, 0)
+			end
+		end
+	end
+end
+
+function ClearCham()
+    for _, Player in pairs(Players:GetPlayers()) do
+        if Player ~= LP and Player.Character:FindFirstChild("Highlight") then
+            Player.Character:FindFirstChild("Highlight"):Destroy()
+        end
+    end
+end
+
+function CreateESP()
+    for _, Player in pairs(Players:GetPlayers()) do
+        if Player ~= LP and not Player.Character.Head:FindFirstChild("BillboardGui") then
+            local E = Instance.new("BillboardGui")
+            E.Parent = Player.Character.Head
+			E.AlwaysOnTop = true
+			E.ExtentsOffset = Vector3.new(0,2,0)
+			E.Size = UDim2.new(0, 200, 0, 50)
+			local N = Instance.new("TextLabel")
+			N.Parent = E
+			N.BackgroundTransparency = 1
+			if Player.Name == Sheriff and IsAlive(Player) then
+		        N.Text = "Name: "..Player.Name.."\nRole: Sheriff"
+    			N.TextColor3 = Color3.fromRGB(0, 0, 255)
+			elseif Player.Name == Murderer and IsAlive(Player) then
+			    N.Text = "Name: "..Player.Name.."\nRole: Murderer"
+				N.TextColor3 = Color3.fromRGB(255, 0, 0)
+			elseif Player.Name == Hero and IsAlive(Player) and not IsAlive(Players[Sheriff]) then
+			    N.Text = "Name: "..Player.Name.."\nRole: Hero"
+				N.TextColor3 = Color3.fromRGB(0, 255, 0)
+			else
+			    N.Text = "Name: "..Player.Name.."\nRole: Innocent"
+				N.TextColor3 = Color3.fromRGB(0, 225, 0)
+            end
+			N.TextSize = 15
+			N.Font = Enum.Font.SourceSans
+			N.Size = UDim2.new(0, 200, 0, 50)
+		end
+    end
+end
+
+function UpdateESP()
+    for _, Player in pairs(Players:GetPlayers()) do
+        if Player ~= LP and Player.Character.Head:FindFirstChild("BillboardGui") then
+            _N = Player.Character.Head:FindFirstChild("BillboardGui"): FindFirstChild("TextLabel")
+            if Player.Name == Sheriff and IsAlive(Player) then
+		        _N.Text = "Name: "..Player.Name.."\nRole: Sheriff"
+    			_N.TextColor3 = Color3.fromRGB(0, 0, 255)
+			elseif Player.Name == Murderer and IsAlive(Player) then
+			    _N.Text = "Name: "..Player.Name.."\nRole: Murderer"
+				_N.TextColor3 = Color3.fromRGB(255, 0, 0)
+			elseif Player.Name == Hero and IsAlive(Player) and not IsAlive(Players[Sheriff]) then
+			    _N.Text = "Name: "..Player.Name.."\nRole: Hero"
+				_N.TextColor3 = Color3.fromRGB(0, 255, 0)
+			else
+			    _N.Text = "Name: "..Player.Name.."\nRole: Innocent"
+				_N.TextColor3 = Color3.fromRGB(0, 225, 0)
+            end
+        end
+    end
+end
+
+function ClearESP()
+    for _, Player in pairs(Players:GetPlayers()) do
+        if Player ~= LP and Player.Character.Head:FindFirstChild("BillboardGui") then
+            Player.Character.Head:FindFirstChild("BillboardGui"):Destroy()
+        end
+    end
+end
+
+function BlurtRoles(Player)
+    local Role = GetRoles(Player)
+    if Role == "Murderer" and IsAliveV2(Player) then 
+        Chat("Murderer is: "..Player.Name.." ("..Player.DisplayName..")")
+    elseif Role == "Sheriff" and IsAliveV2(Player) then 
+        Chat("Sheriff is: "..Player.Name.." ("..Player.DisplayName..")")
+    end
+end
+
+local function NoclipLoop()
+	if OBJECT.Noclip and LP.Character then
+		for _, child in pairs(LP.Character:GetDescendants()) do
+			if child:IsA("BasePart") and child.CanCollide == true and child.Name ~= floatName then
+				child.CanCollide = false
+			end
+		end
+	end
+end
+
+Noclipping = RunService.Stepped:Connect(NoclipLoop)
+
+function LoadedSound()
+    local sound = Instance.new("Sound")
+    sound.Name = "Music"
+    sound.SoundId = "rbxassetid://230336790"
+    sound.Parent = workspace
+    sound.Looped = false
+    sound:Play()
+end
+
+-- Preperation
+
+PlayerUI:CreateLabel("Player:")
+
+UpCreateTextBox("WalkSpeed", LP.Character.Humanoid.WalkSpeed, function(value)
+    OBJECT.Walkspeed = value
+end, PlayerUI)
+
+UpCreateTextBox("JumpPower", LP.Character.Humanoid.JumpPower, function(value)
+    OBJECT.Jumppower = value
+end, PlayerUI)
+
+PlayerUI:CreateButton("God Mode", function()
+    local player = LP
+    if player.Character then
+        if player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid.Name = "1"
+        end
+        local l = player.Character["1"]:Clone()
+        l.Parent = player.Character
+        l.Name = "Humanoid"
+        player.Character["1"]:Destroy()
+        workspace.CurrentCamera.CameraSubject = player.Character.Humanoid
+        player.Character.Animate.Disabled = true
+        wait()
+        player.Character.Animate.Disabled = false
+    end
+end)
+
+PlayerUI:CreateLabel("Tools:")
+
+UpCreateToggle("Xray", function(boolean)
+    if boolean then
+        XrayOn(workspace)
+    else
+        XrayOff(workspace)
+    end
+end, PlayerUI)
+
+UpCreateToggle("Infinite Jump", function(boolean)
+    OBJECT.InfiniteJump = boolean
+end, PlayerUI)
+
+UpCreateToggle("Noclip", function(boolean)
+    OBJECT.Noclip = boolean
+    if boolean then
+        Noclipping = nil
+    else
+        if Noclipping then
+            Noclipping:Disconnect()
+        end
+    end
+end, PlayerUI)
+
+PlayerUI:CreateButton("Blurt Roles", function()
+    for i, Player in pairs(Players:GetPlayers()) do
+        BlurtRoles(Player)
+    end
+end)
+
+-- >< --
+
+VisualsUI:CreateLabel("Cham:")
+
+UpCreateToggle("All Cham", function(boolean)
+    OBJECT.AllCham = boolean
+end, VisualsUI)
+
+UpCreateToggle("All ESP", function(boolean)
+    OBJECT.AllESP = boolean
+end, VisualsUI)
+
+VisualsUI:CreateLabel("Effects:")
+
+UpCreateToggle("Cham GunDrop", function(boolean)
+    OBJECT.ChamGunDrop = boolean
+end, VisualsUI)
+
+UpCreateToggle("ESP GunDrop", function(boolean)
+    OBJECT.ESPGunDrop = boolean
+end, VisualsUI)
+
+VisualsUI:CreateLabel("Kill (Murderer Only):")
+
+VisualsUI:CreateButton("All", function()
+    if GetRoles(LP) == "Murderer" and IsAliveV2(LP) then
+        local savedcf = LP.Character.HumanoidRootPart.CFrame
+        for i, Player in pairs(Players:GetPlayers()) do
+            if Player ~= LP and IsAliveV2(Player) then
+                repeat wait()
+                    LP.Character.HumanoidRootPart.CFrame = Player.Character.HumanoidRootPart.CFrame
+                until Player.Character.Humanoid.Health == 0
+            end
+        end
+        LP.Character.HumanoidRootPart.CFrame = savedcf
+    elseif GetRoles(LP) == "Murderer" and not LP.Character:FindFirstChild("Knife") then
+        notify("Error!", "Equip Your Knife First")
+    elseif not GetRoles(LP) == "Murderer" then
+        notify("Error!", "You are not Murderer")
+    end
+end)
+
+VisualsUI:CreateButton("Sheriff", function()
+    if GetRoles(LP) == "Murderer" and IsAliveV2(LP) then
+        local savedcf = LP.Character.HumanoidRootPart.CFrame
+        for i, Player in pairs(Players:GetPlayers()) do
+            if Player ~= LP and IsAliveV2(Player) and Player.Backpack:FindFirstChild("Gun") or Player.Character:FindFirstChild("Gun") then
+                repeat wait()
+                    LP.Character.HumanoidRootPart.CFrame = Player.Character.HumanoidRootPart.CFrame
+                until Player.Character.Humanoid.Health == 0
+            end
+        end
+        LP.Character.HumanoidRootPart.CFrame = savedcf
+    elseif GetRoles(LP) == "Murderer" and not LP.Character:FindFirstChild("Knife") then
+        notify("Error!", "Equip Your Knife First")
+    elseif not GetRoles(LP) == "Murderer" then
+        notify("Error!", "You are not Murderer")
+    end
+end)
+
+UpCreateTextBox("Kill", "", function(value)
+    if GetRoles(LP) == "Murderer" and IsAliveV2(LP) then
+        local savedcf = LP.Character.HumanoidRootPart.CFrame
+        if GetPlayers(value) ~= nil and IsAliveV2(GetPlayers(value)) then
+            repeat wait()
+                LP.Character.HumanoidRootPart.CFrame = GetPlayers(value).Character.HumanoidRootPart.CFrame
+            until Player.Character.Humanoid.Health == 0
+            LP.Character.HumanoidRootPart.CFrame = savedcf
+        elseif GetPlayers(value) ~= nil and not IsAliveV2(GetPlayers(value)) then
+            notify("Error!", "You're Target Is Already Dead")
+        elseif not GetPlayers(value) ~= nil then
+            notify("Error!", "Please Input A Valid Player")
+        end
+    elseif GetRoles(LP) == "Murderer" and not LP.Character:FindFirstChild("Knife") then
+        notify("Error!", "Equip Your Knife First")
+    elseif not GetRoles(LP) == "Murderer" then
+        notify("Error!", "You are not Murderer")
+    end
+end, VisualsUI)
+
+-- >< --
+
+TeleportUI:CreateLabel("Teleports:")
+
+TeleportUI:CreateButton("Map", function()
+    local Workplace = workspace:GetChildren()
+	for i, Thing in pairs(Workplace) do
+	    local ThingChildren = Thing:GetChildren()
+	    for i, Child in pairs(ThingChildren) do
+	        if Child.Name == "Spawns" then
+	           LP.Character.HumanoidRootPart.CFrame = Child.Spawn.CFrame * CFrame.new(1, 2, 1)
+	        end
+	    end
+	end
+end)
+
+TeleportUI:CreateButton("Lobby", function()
+    LP.Character.HumanoidRootPart.CFrame = CFrame.new(-108.5, 145, 0.6)
+end)
+
+TeleportUI:CreateButton("Murderer", function()
+    local Player = GetMurderer()
+    local Role = GetRoles(Player)
+    if Role == "Murderer" and IsAliveV2(Player) then
+        LP.Character.HumanoidRootPart.CFrame = Player.Character.HumanoidRootPart.CFrame
+    end
+end)
+
+TeleportUI:CreateButton("Sheriff", function()
+    local Player = GetSheriff()
+    local Player2 = GetHero()
+    local Role = GetRoles(Player)
+    if Role == "Sheriff" and IsAliveV2(Player) then
+        LP.Character.HumanoidRootPart.CFrame = Player.Character.HumanoidRootPart.CFrame
+    elseif not IsAliveV2(Player) and IsAliveV2(Player2) then
+        LP.Character.HumanoidRootPart.CFrame = Player2.Character.HumanoidRootPart.CFrame
+    end
+end)
+
+UpCreateTextBox("Teleport", "", function(value)
+    if GetPlayers(value) ~= nil then
+        LP.Character.HumanoidRootPart.CFrame = GetPlayers(value).Character.HumanoidRootPart.CFrame
+    else
+        notify("Error", "Could not find a valid player")
+    end
+end, TeleportUI)
+
+TeleportUI:CreateLabel("Misc:")
+
+TeleportUI:CreateButton("Unlock All Emotes", function()
+    local EmoteHandler;
+    for i,v in next, getgc(true) do
+        if typeof(v) == "table" and v["GeneratePage"] then
+            EmoteHandler = v
+        end
+    end
+    local GUI = LP.PlayerGui.MainGUI.Game:FindFirstChild("Emotes")
+    local EmoteList = {"headless","zombie","zen","ninja","floss","dab","sit"}
+    EmoteHandler.GeneratePage(EmoteList, GUI, "Fe Emote")
+    notify("GG!", "Dont Forget to subscribe to my Channel")
+end)
+
+-- >< --
+
+ModsUI:CreateLabel("Client:")
+
+local GunStatus = ModsUI:CreateLabel("Gun Status: Not Dropped", Color3.fromRGB(255, 0, 0))
+
+ModsUI:CreateButton("Grab Gun", function()
+    if workspace:FindFirstChild("GunDrop") ~= nil and IsAliveV2(LP) then
+        local savedcf = LP.Character.HumanoidRootPart.CFrame
+        LP.Character.HumanoidRootPart.CFrame = workspace:FindFirstChild("GunDrop").CFrame * CFrame.new(0.1, 0.1, 0.1)
+        wait()
+        LP.Character.HumanoidRootPart.CFrame = savedcf
+    elseif workspace:FindFirstChild("GunDrop") ~= nil and not IsAliveV2(LP) then
+        notify("Error!", "You Can't Pick It Up Cause You Already Dead")
+    elseif not workspace:FindFirstChild("GunDrop") ~= nil then
+        notify("Error!", "The Gun Didn't Dropped Yet")
+    end
+end)
+
+UpCreateToggle("Auto Grab Gun", function(boolean)
+     OBJECT.AutoGrabGun = boolean
+end, ModsUI)
+
+ModsUI:CreateLabel("Spectate:")
+
+ModsUI:CreateButton("Spectate Murderer", function()
+    local Player = GetMurderer()
+    local Role = GetRoles(Player)
+    if Role == "Murderer" and IsAliveV2(Player) then
+        workspace.CurrentCamera.CameraSubject = Player.Character
+    end
+end)
+
+ModsUI:CreateButton("Spectate Sheriff", function()
+    local Player = GetSheriff()
+    local Player2 = GetHero()
+    local Role = GetRoles(Player)
+    if Role == "Sheriff" and IsAliveV2(Player) then
+        workspace.CurrentCamera.CameraSubject = Player.Character
+    elseif not IsAliveV2(Player) and IsAliveV2(Player2) then
+        workspace.CurrentCamera.CameraSubject = Player2.Character
+    end
+end)
+
+UpCreateTextBox("Spectate", "", function(value)
+    if GetPlayers(value) ~= nil then
+        workspace.CurrentCamera.CameraSubject = GetPlayers(value).Character
+    else
+        notify("Error!", "Could not find a valid player")
+    end
+end, ModsUI)
+
+ModsUI:CreateButton("Unspectate", function()
+    workspace.CurrentCamera.CameraSubject = LP.Character
+end)
+
+Library:KeybindUI(KeyBind)
+
+-- Loops
+
+RunService.RenderStepped:Connect(function()
+    wait()
+    if workspace:FindFirstChild("GunDrop") then
+        GunStatus:UpdateLabel("Gun Status: Dropped", Color3.fromRGB(0, 255, 0))
+    else
+        GunStatus:UpdateLabel("Gun Status: Not Dropped", Color3.fromRGB(255, 0, 0))
+    end
+    LP.Character.Humanoid.WalkSpeed = OBJECT.Walkspeed
+    LP.Character.Humanoid.JumpPower = OBJECT.Jumppower
+    roles = ReplicatedStorage:FindFirstChild("GetPlayerData", true):InvokeServer()
+	for _, Player in pairs(roles) do
+		if Player.Role == "Murderer" then
+			Murderer = _
+		elseif Player.Role == "Sheriff" then
+			Sheriff = _
+		elseif Player.Role == "Hero" then
+			Hero = _
+		end
+	end
+    if OBJECT.AllCham then
+        CreateCham()
+        UpdateCham()
+    else
+        ClearCham()
+    end
+    if OBJECT.AllESP then
+        CreateESP()
+        UpdateESP()
+    else
+        ClearESP()
+    end
+    if OBJECT.ChamGunDrop then
+        if workspace:FindFirstChild("GunDrop") and not workspace:FindFirstChild("GunDrop"):FindFirstChild("Highlight") then
+            local GunDropCham = Instance.new("Highlight")
+            GunDropCham.Parent = workspace:FindFirstChild("Highlight")
+            GunDropCham.FillColor = Color3.fromRGB(0, 225, 0)
+        end
+    else
+        if workspace:FindFirstChild("GunDrop") and workspace:FindFirstChild("GunDrop"):FindFirstChild("Highlight") then
+           workspace:FindFirstChild("GunDrop"):FindFirstChild("Highlight"):Destroy()
+        end
+    end
+    if OBJECT.ESPGunDrop then
+        if workspace:FindFirstChild("GunDrop") and not workspace:FindFirstChild("GunDrop"):FindFirstChild("BillboardGui") then
+            local CGui = Instance.new("BillboardGui")
+            CGui.Parent = workspace:FindFirstChild("GunDrop")
+			CGui.AlwaysOnTop = true
+			CGui.ExtentsOffset = Vector3.new(0,2,0)
+			CGui.Size = UDim2.new(0, 200, 0, 50)
+			local CGuiR = Instance.new("TextLabel")
+			CGuiR.Parent = CGui
+			CGuiR.Text = "Gun Drop"
+			CGuiR.BackgroundTransparency = 1
+			CGuiR.TextSize = 15
+			CGuiR.Font = Enum.Font.SourceSans
+			CGuiR.TextColor3 = Color3.fromRGB(0, 0, 255)
+			CGuiR.Size = UDim2.new(0, 200, 0, 50)
+		end
+    else
+        if workspace:FindFirstChild("GunDrop") and workspace:FindFirstChild("GunDrop"):FindFirstChild("BillboardGui") then
+           workspace:FindFirstChild("GunDrop"):FindFirstChild("BillboardGui"):Destroy()
+        end
+    end
+end)
+
+workspace.ChildAdded:Connect(function(Object)
+    if Object.Name == "GunDrop" and OBJECT.AutoGrabGun and IsAliveV2(LP) and GetRoles(LP) == "Innocent" then
+        local savedcf = LP.Character.HumanoidRootPart.CFrame
+        LP.Character.HumanoidRootPart.CFrame = workspace:FindFirstChild("GunDrop").CFrame * CFrame.new(0.1, 0.1, 0.1)
+        wait()
+        LP.Character.HumanoidRootPart.CFrame = savedcf
+    end
+end)
+
+spawn(function()
+    game:GetService("UserInputService").JumpRequest:connect(function()
+        if OBJECT.InfiniteJump then
+            LP.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
+        end
+    end)
+end)
+
+Library:HideUI()
+notify("GG!", "Loaded! Welcome to Symphony Hub, "..LP.Name.." ("..LP.DisplayName..")")
+notify("Alert!", "Click '"..KeyBind.."' to Open/Hide the Menu!")
